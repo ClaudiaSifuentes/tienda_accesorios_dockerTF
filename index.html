@@ -17,66 +17,58 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-          <!-- Add Records -->
         <div>
-            <b-button id="show-btn" @click="showModal('my-modal')">Add Records</b-button>
-  
-            <b-modal ref="my-modal" hide-footer title="Add Records">
+            <b-button id="show-btn" @click="showModal('my-modal')">Agregar producto</b-button>
+
+            <b-modal ref="my-modal" hide-footer title="Agregar producto">
               <div>
                 <form action="" @submit.prevent="onSubmit">
                   <div class="form-group">
                     <label for="">Nombre</label>
-                    <input type="text" v-model="firstname" class="form-control">
+                    <input type="text" v-model="Nombre" class="form-control">
                   </div>
                   <div class="form-group">
                     <label for="">Descripcion</label>
-                    <input type="text" v-model="lastname" class="form-control">
+                    <input type="text" v-model="Descripcion" class="form-control">
                   </div>
                   <div class="form-group">
                     <label for="">Precio</label>
-                    <input type="text" v-model="address" class="form-control">
+                    <input type="text" v-model="Precio" class="form-control">
                   </div>
+                  <br>
                   <div class="form-group">
-                    <label for="">Stock</label>
-                    <input type="text" v-model="address" class="form-control">
-                  </div>
-                  <div class="form-group">
-                    <button class="btn btn-sm btn-outline-info">Add Records</button>
+                    <button class="btn btn-sm btn-outline-info">Agregar producto</button>
                   </div>
                 </form>
               </div>
-              <b-button class="mt-3" variant="outline-danger" block @click="hideModal('my-modal')">Close Me</b-button>
+              <b-button class="mt-3" variant="outline-danger" block @click="hideModal('my-modal')">Cerrar</b-button>
             </b-modal>
         </div>
   
-        <!-- Update Record -->
+        <!-- Update Producto -->
         <div>
-            <b-modal ref="my-modal1" hide-footer title="Update Record">
+            <b-modal ref="my-modal1" hide-footer title="Update Producto">
               <div>
                 <form action="" @submit.prevent="onUpdate">
                   <div class="form-group">
                     <label for="">Nombre</label>
                     <input type="text" v-model="edit_id">
-                    <input type="text" v-model="edit_firstname" class="form-control">
+                    <input type="text" v-model="edit_nombre" class="form-control">
                   </div>
                   <div class="form-group">
                     <label for="">Descripcion</label>
-                    <input type="text" v-model="edit_lastname" class="form-control">
+                    <input type="text" v-model="edit_descripcion" class="form-control">
                   </div>
                   <div class="form-group">
                     <label for="">Precio</label>
-                    <input type="text" v-model="edit_address" class="form-control">
+                    <input type="text" v-model="edit_precio" class="form-control">
                   </div>
                   <div class="form-group">
-                    <label for="">Stock</label>
-                    <input type="text" v-model="address" class="form-control">
-                  </div>
-                  <div class="form-group">
-                    <button class="btn btn-sm btn-outline-info">Update Record</button>
+                    <button class="btn btn-sm btn-outline-info">Actualizar Producto</button>
                   </div>
                 </form>
               </div>
-              <b-button class="mt-3" variant="outline-danger" block @click="hideModal('my-modal1')">Close Me</b-button>
+              <b-button class="mt-3" variant="outline-danger" block @click="hideModal('my-modal1')">Cerrar</b-button>
             </b-modal>
           </div>
            
@@ -96,14 +88,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(record, i) in records" :key="record.id">
+              <tr v-for="(producto, i) in productos" :key="producto.id">
                 <td>{{i + 1}}</td>
-                <td>{{record.nombre}}</td>
-                <td>{{record.descripcion}}</td>
-                <td>{{record.precio}}</td>
+                <td>{{producto.nombre}}</td>
+                <td>{{producto.descripcion}}</td>
+                <td>{{producto.precio}}</td>
                 <td>
-                  <button @click="deleteRecord(record.id)" class="btn btn-sm btn-outline-danger">Delete</button>
-                  <button @click="editRecord(record.id)" class="btn btn-sm btn-outline-info">Edit</button>
+                  <button @click="deleteProducto(producto.id)" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                  <button @click="editProducto(producto.id)" class="btn btn-sm btn-outline-info">Editar</button>
                 </td>
               </tr>
             </tbody>
@@ -120,11 +112,11 @@
 <script>
     var app = new Vue({
         el: '#vuejscrudapp',
-        data: {
+        data: { 
             nombre: '',
             descripcion: '',
             precio: '',
-            records: [],
+            productos: [],
             edit_id: '',
             edit_nombre: '',
             edit_descripcion: '',
@@ -140,23 +132,23 @@
             },
   
             onSubmit(){
-                if (this.firstname !== '' && this.lastname !== '' && this.address !== '') {
+                if (this.Nombre !== '' && this.Descripcion !== '' && this.Precio !== '') {
                     var config = { headers: {  
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Origin': '*'}
                     }
                     axios.post("http://127.0.0.1:5000/insert", 
-                        { firstname : this.firstname, lastname : this.lastname, address : this.address}, config
+                        { Nombre : this.Nombre, Descripcion : this.Descripcion, Precio : this.Precio}, config
                     )
                     .then(res => {
                         console.log(res)
-                        alert('New record Successfully added')
-                        this.firstname = ''
-                        this.lastname = ''
-                        this.address = ''
+                        alert('Nuevo producto agregado correctamente')
+                        this.Nombre = ''
+                        this.Descripcion = ''
+                        this.Precio = ''
           
                         app.hideModal('my-modal')
-                        app.getRecords()
+                        app.getProductos()
                     })
                     .catch(err => {
                         console.log(err)
@@ -166,28 +158,28 @@
                 }
             },
   
-            getRecords(){
+            getProductos(){
                 axios({
-                  url: 'http://localhost:5000/',
+                  url: '/',
                   method: 'get'
                 })
                 .then(res => {
                   console.log(res)
-                  this.records = res.data.productos
+                  this.productos = res.data.productos
                 })
                 .catch(err => {
                   console.log(err)
                 })
             },
   
-            editRecord(id){
-                axios.get("http://127.0.0.1:5000/edit/" + id)
+            editProducto(id){
+                axios.get("/edit/" + id)
                 .then(res => {
                     console.log(res.data)
-                    this.edit_id = res.data.editmember['id']
-                    this.edit_firstname = res.data.editmember['firstname']
-                    this.edit_lastname = res.data.editmember['lastname']
-                    this.edit_address = res.data.editmember['address']
+                    this.edit_id = res.data.editproducto['id']
+                    this.edit_nombre = res.data.editproducto['Nombre']
+                    this.edit_descripcion = res.data.editproducto['Descripcion']
+                    this.edit_precio = res.data.editproducto['Precio']
                     app.showModal('my-modal1')
                 })
                 .catch(err => {
@@ -196,26 +188,26 @@
             },
              
             onUpdate(){
-                if (this.edit_firstname !== '' && this.edit_lastname !== '' && this.edit_address !== '' && this.edit_id !== '') {
+                if (this.edit_nombre !== '' && this.edit_descripcion !== '' && this.edit_precio !== '' && this.edit_id !== '') {
  
                     var config = { headers: {  
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Origin': '*'}
                     }
-                    axios.post("http://127.0.0.1:5000/update", 
-                        { edit_id : this.edit_id, edit_firstname : this.edit_firstname, edit_lastname : this.edit_lastname, edit_address : this.edit_address}, config
+                    axios.post("/update", 
+                        { edit_id : this.edit_id, edit_nombre : this.edit_nombre, edit_descripcion : this.edit_descripcion, edit_precio : this.edit_precio}, config
                     )
                     .then(res => {
                         console.log(res)
-                        alert('record update');
+                        alert('producto actualizado');
           
-                        this.edit_firstname = '';
-                        this.edit_lastname = '';
-                        this.edit_address = '';
+                        this.edit_nombre = '';
+                        this.edit_descripcion = '';
+                        this.edit_precio = '';
                         this.edit_id = '';
           
                         app.hideModal('my-modal1');
-                        app.getRecords();
+                        app.getProductos();
                     })
                       .catch(err => {
                         console.log(err)
@@ -226,13 +218,13 @@
                 }
             },
              
-            deleteRecord(id){
-                if (window.confirm('Delete this record')) {
-                    axios.get("http://127.0.0.1:5000/delete/" + id)
+            deleteProducto(id){
+                if (window.confirm('Producto Eliminado')) {
+                    axios.get("/delete/" + id)
                     .then(res => {
                         console.log(res)
                         alert('delete successfully')
-                        app.getRecords();
+                        app.getProductos();
                     })
                     .catch(err => {
                         console.log(err)
@@ -243,7 +235,7 @@
         },
            
         mounted: function(){
-          this.getRecords()
+          this.getProductos()
         }
     })
 </script>

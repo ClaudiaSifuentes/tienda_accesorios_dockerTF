@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from flaskext.mysql import MySQL #pip install flask-mysql
+from flaskext.mysql import MySQL 
 import pymysql
  
 PRODUCTOS = [
@@ -29,14 +29,13 @@ mysql = MySQL()
 app.config['MYSQL_DATABASE_USER'] = 'support'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'ubuntu01'
 app.config['MYSQL_DATABASE_DB'] = 'tienda_accesorios'
-app.config['MYSQL_DATABASE_HOST'] = '54.89.177.242'
+app.config['MYSQL_DATABASE_HOST'] = '34.226.143.67'
 mysql.init_app(app)
  
-# enable CORS
+
 CORS(app, resources={r'/*': {'origins': '*'}})
- 
- 
-# sanity check route
+
+
 @app.route('/ping', methods=['GET'])
 def ping_pong():
     return jsonify('pong!')
@@ -72,15 +71,16 @@ def insert():
     response_object = {'status': 'success'}
     if request.method == 'POST':
         post_data = request.get_json(silent=True)
-        firstname = post_data.get('firstname')
-        lastname = post_data.get('lastname')
-        address = post_data.get('address')
+        Nombre = post_data.get('Nombre')
+        Descripcion = post_data.get('Descripcion')
+        Precio = post_data.get('Precio')
  
-        print(firstname)
-        print(lastname)
+        print(Nombre)
+        print(Descripcion)
+        print(Precio)
  
-        sql = "INSERT INTO members(firstname,lastname,address) VALUES(%s, %s, %s)"
-        data = (firstname, lastname, address)
+        sql = "INSERT INTO productos(Nombre,Descripcion,Precio) VALUES(%s, %s, %s)"
+        data = (Nombre, Descripcion, Precio)
         conn = mysql.connect()
         cursor = conn.cursor()
         cursor.execute(sql, data)
@@ -99,7 +99,7 @@ def edit(id):
  
     return jsonify({
         'status': 'success',
-        'editmember': row
+        'editproducto': row
     })
  
 @app.route('/update', methods=['GET', 'POST'])
@@ -110,14 +110,15 @@ def update():
     if request.method == 'POST':
         post_data = request.get_json(silent=True)
         edit_id = post_data.get('edit_id')
-        edit_firstname = post_data.get('edit_firstname')
-        edit_lastname = post_data.get('edit_lastname')
-        edit_address = post_data.get('edit_address')
+        edit_nombre = post_data.get('edit_nombre')
+        edit_descripcion = post_data.get('edit_descripcion')
+        edit_precio = post_data.get('edit_precio')
  
-        print(edit_firstname)
-        print(edit_lastname)
+        print(edit_nombre)
+        print(edit_descripcion)
+        print(edit_precio)
  
-        cursor.execute ("UPDATE members SET firstname=%s, lastname=%s, address=%s WHERE id=%s",(edit_firstname, edit_lastname, edit_address, edit_id))
+        cursor.execute ("UPDATE productos SET Nombre=%s, Descripcion=%s, Precio=%s WHERE id=%s",(edit_nombre, edit_descripcion, edit_precio, edit_id))
         conn.commit()
         cursor.close()
  
@@ -131,7 +132,7 @@ def delete(id):
    
     response_object = {'status': 'success'}
  
-    cursor.execute("DELETE FROM members WHERE id = %s", [id])
+    cursor.execute("DELETE FROM productos WHERE id = %s", [id])
     conn.commit()
     cursor.close()
     response_object['message'] = "Successfully Deleted"
